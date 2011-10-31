@@ -1,0 +1,226 @@
+<html>
+<body>
+    <script type="text/javascript" src="js/j142.js"></script>
+    <script type="text/javascript" src="js/lib.js"></script>
+    <script type="text/javascript">
+        var test = false;
+        var lastctxhref = "";
+        var selected = { tabId: -1, wins: [] };
+        function onreq(req, sender, resp) {
+            var act = req.name;
+            if (act.indexOf("down") == 0) {
+                var dm = req.dm;
+                if (dm == null || dm == undefined || dm == "") dm = get(_cfgid.DownloadManagerCurrent);
+                if (dm && dm != "" && dm.length > 1) {
+                    var rn = '\n';
+                    if (act == "downone") {
+                        downone(dm, req.link, req.referer, req.txt, req.cookies, req.posts);
+                    } else if (act == "downall") {
+                        downall(dm, req.links, req.referer, req.txts, req.cookies);
+                    }
+                } else {
+                    if (confirm(restr("bak_optconf"))) {
+                        opentab("options.html");
+                    }
+                }
+            } else if (act == "open") {
+                opentab(req.arg);
+            } else if (act == "getcfg") {
+                resp({
+                    leftclick: strtobool(get(_cfgid.EnableLeftClick)),
+                    extstr: formatstr(get(_cfgid.LeftClickExtensions)),
+                    regstr: formatstr(get(_cfgid.LeftClickRegexs)),
+                    showmenu: strtobool(get(_cfgid.EnableExtensionMenu)),
+                    mo: formatstr(get(_cfgid.MenuItemTextDownloadOne)),
+                    ma: formatstr(get(_cfgid.MenuItemTextDownloadAll)),
+                    dmsa: formatstr(get(_cfgid.DownloadManagersSupportAll)),
+                    dmso: formatstr(get(_cfgid.DownloadManagersSupportOne))
+                });
+            } else if (act == "umenu") {
+                reCreateMenu();
+            } else if (act == "ctxstart") {
+                lastctxhref = req.location;
+            } else if (act == "chk") {
+                resp({ exists: "1" });
+            }
+        }
+
+        chrome.extension.onRequestExternal.addListener(onreq);
+        chrome.extension.onRequest.addListener(onreq);
+
+        function getAPI() {
+            var api = $("#_dmb")[0];
+            if (!api) {
+                document.documentElement.appendChild($(document.createElement("embed")).attr("type", "application/dm-bridge").attr("id", "_dmb")[0]);
+                api = $("#_dmb")[0];
+            }
+            return api;
+        }
+        function opentab(url) {
+            var fullUrl = chrome.extension.getURL(url);
+            chrome.tabs.getAllInWindow(null, function (tabs) {
+                for (var i in tabs) { // check if Options page is open already
+                    var tab = tabs[i];
+                    if (tab.url == fullUrl) {
+                        chrome.tabs.update(tab.id, { selected: true }); // select the tab
+                        return;
+                    }
+                }
+                chrome.tabs.getSelected(null, function (tab) { // open a new tab next to currently selected tab
+                    chrome.tabs.create({
+                        url: url,
+                        index: tab.index + 1
+                    });
+                });
+            });
+        }
+        var rn = "\n";
+        var retxt = function (txt) {
+            if (txt == null)
+                return "";
+            else {
+                return txt.replace(/\s/g, " ").replace(rn, "<br>");
+            }
+        };
+        var fdmc = function () {
+            var dmc = get(_cfgid.DownloadManagerCustomString);
+            if (dmc != null && dmc.length > 0) { dmc = dmc.replace(";", ">|<"); }
+            return dmc;
+        };
+        function downone(dm, link, referer, txt, cookies, posts) {
+            if (!posts) { posts = ""; }
+            if (!/http:|https:/.test(referer)) referer = "";
+            try {
+                var dstr = "1;" + dm + ";0;;" + fdmc() + ";" + rn + referer + rn + link + rn + retxt(txt) + rn + cookies + rn + posts + rn;
+                getAPI().Open(dstr);
+            } catch (e) {
+                alert(e.message);
+            }
+        }
+        function downall(dm, links, referer, txts, cookies) {
+            if (!/http:|https:/.test(referer)) referer = "";
+            var linkstr = "";
+            $.each(links, function (i, link) { linkstr += link + rn + retxt(txts[i]) + rn + cookies[i] + rn + rn; });
+            try {
+                var dstr = links.length + ";" + dm + ";2;;" + fdmc() + ";" + rn + referer + rn + linkstr;
+                getAPI().Open(dstr);
+            } catch (e) {
+                alert(e.message);
+            }
+        }
+
+        function verchanged(newv, oldv, len) {
+            if (oldv && oldv.length > 1) {
+                if (len > 0) {
+                    return oldv.substr(0, len) != newv.substr(0, len);
+                }
+                return oldv == newv;
+            }
+            return true;
+        }
+        $.get(chrome.extension.getURL("manifest.json"), function (data) {
+            var ver = data.version;
+            if (verchanged(ver, get(_cfgid.ExtensionVersion), 3)) {
+                set(_cfgid.ExtensionVersion, ver);
+                opentab("options.html");
+            }
+        }, "json");
+
+        var contextmenuids = [];
+        function removeMenu() {
+            while (contextmenuids.length > 0) {
+                chrome.contextMenus.remove(contextmenuids.pop());
+            }
+            console.log("contextmenu removed.");
+        }
+        function reCreateMenu() {
+            removeMenu();
+            var clickedone = function (dm, info, tab) {
+                chrome.tabs.sendRequest(tab.id, { name: "ctxclick", dm: dm, loc: lastctxhref, isall: false });
+            };
+            var clickedall = function (dm, info, tab) {
+                chrome.tabs.sendRequest(tab.id, { name: "ctxclick", dm: dm, loc: lastctxhref, isall: true, selc: info.selectionText });
+            };
+            var finished = function () {
+                if (false && chrome.extension.lastError) {
+                    alert(chrome.extension.lastError.message);
+                }
+            };
+            var formatmenustr = function (str1, str2) { return str1.replace("%s", str2); };
+
+            var dmpolicy = get(_cfgid.MenuPolicy); if (dmpolicy) dmpolicy = dmpolicy.split(",");
+            var findmode = function (appid) {
+                return findone(dmpolicy, function (dmp) { return dmp.split("|")[0] == appid; }, function (dmp) { return dmp.split("|")[1]; }, 0);
+            }
+
+            var dmso = $.grep(strtoarr(formatstr(get(_cfgid.DownloadManagersSupportOne))), function (n, i) {
+                var mode = findmode(n);
+                return mode == 0 || mode == 1;
+            });
+            var dmsa = $.grep(strtoarr(formatstr(get(_cfgid.DownloadManagersSupportAll))), function (n, i) {
+                var mode = findmode(n);
+                return mode == 0 || mode == 2;
+            });
+
+            var iscustomed = get(_cfgid.EnableCustomDMMenu) == "1" && get(_cfgid.DownloadManagerCurrent) == _cfgid._CustomDownloadManager;
+            var isautohide = get(_cfgid.EnableAutoHideParentMenu) == "1";
+            if (!(strtobool(get(_cfgid.EnableChromeMenu)) && (dmso.length + dmsa.length > 0 || iscustomed))) return;
+
+            var pid = 0;
+            if (!isautohide) {
+                var pid = chrome.contextMenus.create({ title: get(_cfgid.MenuItemTextRoot), contexts: ['page', 'link', 'selection'] }, finished);
+            }
+            $.each(dmso, function (i, n) {
+                var dat = { title: formatmenustr(get(_cfgid.MenuItemTextDownloadOne), n), contexts: ['link'], onclick: function (a, b) { clickedone(n, a, b); } };
+                if (!isautohide) {
+                    dat.parentId = pid;
+                }
+                var id = chrome.contextMenus.create(dat, finished);
+                if (isautohide) {
+                    contextmenuids.push(id);
+                }
+            });
+            if (iscustomed) {
+                var app = getappname(formatstr(get(_cfgid.DownloadManagerCustomString)));
+                if (app) {
+                    var dat = { title: formatmenustr(get(_cfgid.MenuItemTextDownloadOne), app), contexts: ['link'], onclick: function (a, b) { clickedone("_DM_C", a, b); } };
+                    if (!isautohide) {
+                        dat.parentId = pid;
+                    }
+                    var id = chrome.contextMenus.create(dat, finished);
+                    if (isautohide) {
+                        contextmenuids.push(id);
+                    }
+                }
+            }
+            if (dmsa.length > 0) {
+                //                if (dmso.length > 0) {
+                //                    var dat = { type: "separator", contexts: ['link'] };
+                //                    if (!isautohide) {
+                //                        dat.parentId = pid;
+                //                    }
+                //                    var id = chrome.contextMenus.create(dat, finished);
+                //                    if (isautohide) {
+                //                        contextmenuids.push(id);
+                //                    }
+                //                }
+                $.each(dmsa, function (i, n) {
+                    var dat = { title: formatmenustr(get(_cfgid.MenuItemTextDownloadAll), n), contexts: ['page', 'selection'], onclick: function (a, b) { clickedall(n, a, b); } };
+                    if (!isautohide) {
+                        dat.parentId = pid;
+                    }
+                    var id = chrome.contextMenus.create(dat, finished);
+                    if (isautohide) {
+                        contextmenuids.push(id);
+                    }
+                });
+            }
+            if (!isautohide) {
+                contextmenuids.push(pid);
+            }
+            console.log("contextmenu created.");
+        }
+        reCreateMenu();
+    </script>
+</body>
+</html>

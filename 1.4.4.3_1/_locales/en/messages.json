@@ -1,0 +1,128 @@
+{
+   "bak_optconf": {
+      "message": "Not set the default download manager, open options page now ?"
+   },
+   "clear_confirm": {
+      "message": "Are you sure to disable this item ?"
+   },
+   "clear_tip": {
+      "message": "Click here to disable this item if the program is not in your system now."
+   },
+   "description": {
+      "message": "External download managers support for Chrome, with contextmenus."
+   },
+   "hlp_a": {
+      "message": "Thank you for the installation, now your Chrome supports external download-managers."
+   },
+   "hlp_b": {
+      "message": "Usage: Ctrl + Alt + Left click "
+   },
+   "hlp_c": {
+      "message": "Context menu works now, please visit options page."
+   },
+   "hlp_d": {
+      "message": "Click here to open options page"
+   },
+   "hlp_e": {
+      "message": "When you have any idears, let me know. "
+   },
+   "hlp_f": {
+      "message": "You may want to check out some extensions below:"
+   },
+   "msg_invaildselection": {
+      "message": "Selection is invalid."
+   },
+   "name": {
+      "message": "Downloaders"
+   },
+   "opt_btn_reload": {
+      "message": "Reload"
+   },
+   "opt_btn_save": {
+      "message": "Save"
+   },
+   "opt_btn_save_close": {
+      "message": "Save and Close"
+   },
+   "opt_custom1": {
+      "message": "Custom"
+   },
+   "opt_custom2": {
+      "message": "Example: \"C:\\Program Files\\GnuWin32\\bin\\wget.exe\" --directory-prefix=C:\\Users\\Administrator\\Desktop --referer=%r %u"
+   },
+   "opt_custom3": {
+      "message": "%u=Link, %r=Referer, %t=Comment, %c=Cookies"
+   },
+   "opt_custom4": {
+      "message": "When the path contains spaces, use double quotes."
+   },
+   "opt_help": {
+      "message": "Welcome page"
+   },
+   "opt_int_desc": {
+      "message": "Links will be tested in lower case. The default Ctrl + Alt +Click is not effected."
+   },
+   "opt_int_leftc": {
+      "message": "Use left click to download(First line is extensions, second line is Javascript Regexs, all those separated by \",\".)"
+   },
+   "opt_int_title": {
+      "message": "Integration mode settings"
+   },
+   "opt_mailtome": {
+      "message": "Mail to yissyoo"
+   },
+   "opt_menu_auto": {
+      "message": "3) If there is only one menu item, display it instead of main menu item."
+   },
+   "opt_menu_downall": {
+      "message": "Menu item text(download all links)"
+   },
+   "opt_menu_downallformat": {
+      "message": "Download all links with %s"
+   },
+   "opt_menu_downone": {
+      "message": "Menu item text(download single link)"
+   },
+   "opt_menu_downoneformat": {
+      "message": "Download this link with %s"
+   },
+   "opt_menu_main": {
+      "message": "Menu item text(main text of Chrome's own context menu, only works when third checkbox not checked)"
+   },
+   "opt_menu_main_default": {
+      "message": "External download-manager support"
+   },
+   "opt_menu_showcustominmenu2": {
+      "message": "2) Display \"Custom Downloader\"'s menu item."
+   },
+   "opt_menu_showmenu": {
+      "message": "4) Show quick context menu when [Shift] + [Right click]"
+   },
+   "opt_menu_showmenu2": {
+      "message": "1) Integration with the context menu"
+   },
+   "opt_menu_title": {
+      "message": "Context menu settings"
+   },
+   "opt_msg_reload": {
+      "message": "Reloaded"
+   },
+   "opt_msg_saved": {
+      "message": "Saved, options may works in new tabs."
+   },
+   "opt_sel_title": {
+      "message": "Please select a default download manager"
+   },
+   "p_mode0": {
+      "message": "ON"
+   },
+   "p_mode1": {
+      "message": "Single link only"
+   },
+   "p_mode2": {
+      "message": "All links only"
+   },
+   "p_mode3": {
+      "message": "OFF"
+   }
+}

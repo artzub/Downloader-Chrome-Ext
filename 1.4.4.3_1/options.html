@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <link rel="stylesheet" href="js/tip-yellowsimple/tip-yellowsimple.css" type="text/css" />
+    <style type="text/css">
+        body, input, textarea
+        {
+            font-family: Microsoft YaHei, Gisha, Arial, Courier New, SimSun;
+            font-size: 12px;
+        }
+        .title
+        {
+            font-size: 150%;
+            font-weight: bold;
+        }
+        .btn
+        {
+            -webkit-border-radius: 3px;
+            border: solid 1px rgb(153, 153, 153);
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(255, 255, 255)), to(rgb(221, 221, 221)));
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-bottom: 5px;
+            padding-top: 5px;
+        }
+        .btn:hover
+        {
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(238, 238, 238)), to(rgb(221, 221, 221)));
+        }
+        .btn:active
+        {
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(204, 204, 204)), to(rgb(221, 221, 221)));
+        }
+    </style>
+    <title>Downloaders (Windows only)</title>
+</head>
+<body style="background-image: url('images/optbg.png'); background-repeat: no-repeat; background-position: right top;">
+    <embed id="_dmb" type="application/dm-bridge" height="0" width="0"></embed>
+    <script type="text/javascript" src="js/j142.js"></script>
+    <script type="text/javascript" src="js/lib.js"></script>
+    <script type="text/javascript" src="js/jquery.poshytip.min.js"></script>
+    <script type="text/javascript" src="js/opt.js"></script>
+    <div style="height: 20px; padding: 5px;">
+        <center>
+            <div id="spmsg" style="display: none; background-color: #FFEF8C; color: Black; font-size: 100%; font-weight: bold; padding-top: 5px; padding-bottom: 5px; text-align: center; width: 100%; -webkit-border-radius: 3px;">
+            </div>
+        </center>
+    </div>
+    <br />
+    <div class="title">
+        <label mid="opt_sel_title" title="title">
+        </label>
+    </div>
+    <div style="padding: 10px;">
+        <div id="dms" style="padding: 0;">
+        </div>
+        <br />
+        <nobr>
+        <input type="radio" name="dm" id="rdCustom" value="_DM_C" />
+        <label for="rdCustom" mid="opt_custom1"></label>
+        <input type="text" id="txtCustom"  style=" width:80%" />
+        </nobr>
+        <br />
+        <ul style="line-height: 20px;">
+            <li>
+                <label mid="opt_custom2">
+                </label>
+            </li>
+            <li>
+                <label mid="opt_custom3">
+                </label>
+            </li>
+            <li>
+                <label mid="opt_custom4">
+                </label>
+            </li>
+        </ul>
+    </div>
+    <div class="title">
+        <label mid="opt_int_title">
+        </label>
+    </div>
+    <div style="padding: 10px; line-height: 20px;">
+        <input type="checkbox" id="chkLeftClick" /><label for="chkLeftClick" mid="opt_int_leftc"></label>
+        <br />
+        <textarea type="text" id="txtExts" style="width: 95%"></textarea><br />
+        <label style="color: Red;" mid="opt_int_desc">
+        </label>
+    </div>
+    <br />
+    <div class="title">
+        <label mid="opt_menu_title">
+        </label>
+    </div>
+    <div style="padding: 10px; line-height: 20px;">
+        <input type="checkbox" id="chkMenu2" /><label for="chkMenu2" mid="opt_menu_showmenu2"></label>
+        <br />
+        <input type="checkbox" id="chkMenu2Custom" /><label for="chkMenu2Custom" mid="opt_menu_showcustominmenu2"></label>
+        <br />
+        <input type="checkbox" id="chkMenu2Auto" /><label for="chkMenu2Auto" mid="opt_menu_auto"></label>
+        <br />
+        <input type="checkbox" id="chkMenu" /><label for="chkMenu" mid="opt_menu_showmenu"></label>
+        <br />
+        <label mid="opt_menu_main">
+        </label>
+        <br />
+        <input type="text" id="txtDoM" style="width: 95%" />
+        <br />
+        <label mid="opt_menu_downone">
+        </label>
+        <br />
+        <input type="text" id="txtDof" style="width: 95%" />
+        <br />
+        <label mid="opt_menu_downall">
+        </label>
+        <br />
+        <input type="text" id="txtDaf" style="width: 95%" />
+    </div>
+    <br />
+    <div>
+        <center>
+            <a mid="opt_btn_reload" class="btn" href="javascript:window.location.reload();"></a>&nbsp; <a mid="opt_btn_save" class="btn" href="javascript:save(false);"></a>&nbsp; <a mid="opt_btn_save_close" class="btn" href="javascript:save(true);"></a>&nbsp;
+        </center>
+    </div>
+    <br />
+    <div>
+        <a href="#" style="text-decoration: none;" onclick="openpage(chrome.extension.getURL('help.html'));return false;">
+            <label mid="opt_help" style="cursor: pointer;">
+            </label>
+        </a>| <a href="mailto:yissyoo@gmail.com" style="text-decoration: none;">
+            <label mid="opt_mailtome" style="cursor: pointer;">
+            </label>
+        </a>
+    </div>
+</body>
+</html>
