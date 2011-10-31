@@ -133,7 +133,17 @@
             }
             console.log("contextmenu removed.");
         }
+		
+		var ExtStrs = [];
+		var RegStrs = [];
+		
         function reCreateMenu() {
+			ExtStrs = strtoarr(formatstr(get(_cfgid.LeftClickExtensions)));
+			$.each(strtoarr(formatstr(get(_cfgid.LeftClickRegexs))), 
+				function (i, reg) { 
+					RegStrs[i] = new RegExp(reg);
+			});
+		
             removeMenu();
             var clickedone = function (dm, info, tab) {
                 chrome.tabs.sendRequest(tab.id, { name: "ctxclick", dm: dm, loc: lastctxhref, isall: false });
@@ -221,6 +231,36 @@
             console.log("contextmenu created.");
         }
         reCreateMenu();
+		
+		chrome.experimental.webRequest.onBeforeRequest.addListener(
+			function(details) {
+				if (details.type != "object")
+					return;
+				var href = details.url.toLowerCase();
+				var match = false;				
+				$.each(ExtStrs, function (i, ext) { 
+					if ((href.lastIndexOf(ext) + ext.length) == href.length) 
+						{ match = true; return false; } 
+				});
+				if (!match) {
+					$.each(RegStrs, function (i, reg) {
+						try {
+							if (reg.test(href)) { match = true; return false; }
+						} catch (e) { }
+					});
+				}
+				if (match) {
+					console.log(details.url);
+					var title = "";
+					var urlTab = "";
+					chrome.tabs.get(details.tabId, function(tab) {
+						title = tab.title;
+						urlTab = tab.url;
+					});
+					downone(get(_cfgid.DownloadManagerCurrent), details.url, urlTab, title, [])
+					return { cancel: true };
+				}				
+		},{},["blocking"]);
     </script>
 </body>
 </html>

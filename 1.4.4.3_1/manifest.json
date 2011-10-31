@@ -3,7 +3,8 @@
    "content_scripts": [ {
       "all_frames": true,
       "js": [ "js/j142.js", "js/lib.js", "js/dmb.js" ],
-      "matches": [ "http://*/*", "https://*/*", "ftp://*/*", "file:///*/*" ]
+      "matches": [ "http://*/*", "https://*/*", "ftp://*/*", "file:///*/*" ],
+	  "run_at": "document_end"
    } ],
    "default_locale": "en",
    "description": "__MSG_description__",
@@ -13,13 +14,13 @@
    },
    "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDUPOyWq55QyW/pna4nzsaIHXRvEUq5FLGrRfthS+H+BMKUeXWyENcrE7270CBVjDETqz+cCTmSVzRh6SlXprrI9LPkIfeDQhQMPsyhzeKYcKJuymC8KL+hgDiSSsQshg4OafdyN11n9ZCy8cqYHtHKaXTd1xT308WDctG4UdrhbQIDAQAB",
    "minimum_chrome_version": "6.0.472.53",
-   "name": "__MSG_name__",
+   "name": "__MSG_name__ test",
    "options_page": "options.html",
-   "permissions": [ "tabs", "contextMenus" ],
+   "permissions": [ "tabs", "contextMenus", "experimental", "http://*/*", "https://*/*", "ftp://*/*", "file:///*/*" ],
    "plugins": [ {
       "path": "npdmb.dll",
       "public": true
    } ],
    "update_url": "http://clients2.google.com/service/update2/crx",
-   "version": "1.4.4.3"
+   "version": "1.4.4.31"
 }
