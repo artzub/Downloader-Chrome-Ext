@@ -62,6 +62,9 @@
    "opt_int_desc": {
       "message": "Links will be tested in lower case. The default Ctrl + Alt +Click is not effected."
    },
+   "opt_block_stream": {
+      "message": "Block media content if found pattern (displayed in omnibox icon to download)."
+   },
    "opt_int_leftc": {
       "message": "Use left click to download(First line is extensions, second line is Javascript Regexs, all those separated by \",\".)"
    },

@@ -4,6 +4,7 @@ var _cfgid = {
     DownloadManagersSupportAll: "_dms_all",
     DownloadManagersSupportOne: "_dms_one",
     EnableLeftClick: "_leftclick",
+    EnableBlockStream: "_blockstream",
     LeftClickExtensions: "_exts",
     LeftClickRegexs: "_exts_reg",
     EnableExtensionMenu: "_showmenu",
@@ -22,13 +23,14 @@ function get(key) {
         if (k == k2) { var v = localStorage.getItem(k); return v == undefined || v == null; }
         return false;
     }
+    if (nv(key, _cfgid.EnableBlockStream)) return booltostr(false);
     if (nv(key, _cfgid.EnableLeftClick)) return booltostr(false);
     if (nv(key, _cfgid.EnableChromeMenu)) return booltostr(true);
     if (nv(key, _cfgid.EnableCustomDMMenu)) return booltostr(true);
     if (nv(key, _cfgid.EnableAutoHideParentMenu)) return booltostr(true);
     if (nv(key, _cfgid.EnableExtensionMenu)) return booltostr(true);
     if (nv(key, _cfgid.LeftClickExtensions)) return ".asf,.avi,.exe,.iso,.mp3,.mpeg,.mpg,.mpga,.ra,.rar,.rm,.rmvb,.tar,.wma,.wmp,.wmv,.mov,.zip,.3gp,.chm,.mdf,.torrent,.mp4,.7z";
-    if (nv(key, _cfgid.LeftClickRegexs)) return "\\.exe\\?,\\.rar\\?";
+    if (nv(key, _cfgid.LeftClickRegexs)) return "\\.exe\\??,\\.rar\\??,\\.flv\\??,\\.mp4\\??,\\.avi\\??,\\.mpeg\\??,\\.mpg\\??,\\.wmv\\??,\\.mov\\??,\\.3gp\\??,youtube\\.com/videoplayback\\?";
     if (nv(key, _cfgid.MenuItemTextRoot)) return restr("opt_menu_main_default");
     if (nv(key, _cfgid.MenuItemTextDownloadOne)) return restr("opt_menu_downoneformat");
     if (nv(key, _cfgid.MenuItemTextDownloadAll)) return restr("opt_menu_downallformat");

@@ -6,6 +6,14 @@
         var test = false;
         var lastctxhref = "";
         var selected = { tabId: -1, wins: [] };
+        var ExtStrs = [];
+        var RegStrs = [];
+        var FilesMap = {};
+
+        function getFiles(tabId) {
+            return FilesMap[tabId];
+        }
+
         function onreq(req, sender, resp) {
             var act = req.name;
             if (act.indexOf("down") == 0) {
@@ -133,17 +141,15 @@
             }
             console.log("contextmenu removed.");
         }
-		
-		var ExtStrs = [];
-		var RegStrs = [];
-		
+
         function reCreateMenu() {
-			ExtStrs = strtoarr(formatstr(get(_cfgid.LeftClickExtensions)));
-			$.each(strtoarr(formatstr(get(_cfgid.LeftClickRegexs))), 
-				function (i, reg) { 
-					RegStrs[i] = new RegExp(reg);
-			});
-		
+            ExtStrs = strtoarr(formatstr(get(_cfgid.LeftClickExtensions)));
+            $.each(strtoarr(formatstr(get(_cfgid.LeftClickRegexs))),
+                function (i, reg) {
+                    RegStrs[i] = new RegExp(reg);
+            });
+            FilesMap = {};
+
             removeMenu();
             var clickedone = function (dm, info, tab) {
                 chrome.tabs.sendRequest(tab.id, { name: "ctxclick", dm: dm, loc: lastctxhref, isall: false });
@@ -231,36 +237,92 @@
             console.log("contextmenu created.");
         }
         reCreateMenu();
-		
-		chrome.experimental.webRequest.onBeforeRequest.addListener(
-			function(details) {
-				if (details.type != "object")
-					return;
-				var href = details.url.toLowerCase();
-				var match = false;				
-				$.each(ExtStrs, function (i, ext) { 
-					if ((href.lastIndexOf(ext) + ext.length) == href.length) 
-						{ match = true; return false; } 
-				});
-				if (!match) {
-					$.each(RegStrs, function (i, reg) {
-						try {
-							if (reg.test(href)) { match = true; return false; }
-						} catch (e) { }
-					});
-				}
-				if (match) {
-					console.log(details.url);
-					var title = "";
-					var urlTab = "";
-					chrome.tabs.get(details.tabId, function(tab) {
-						title = tab.title;
-						urlTab = tab.url;
-					});
-					downone(get(_cfgid.DownloadManagerCurrent), details.url, urlTab, title, [])
-					return { cancel: true };
-				}				
-		},{},["blocking"]);
+
+        function updatePageAction(tabId, tabUrl) {
+            if (tabUrl.indexOf('chrome://') == 0 ||
+                tabUrl.indexOf('chrome-extension://') == 0)
+                return;
+
+            if (typeof(FilesMap[tabId]) == 'undefined' || FilesMap[tabId] == null)
+                chrome.pageAction.hide(tabId);
+            else
+                chrome.pageAction.show(tabId);
+        }
+
+        function foreachTab(callback) {
+            chrome.windows.getAll({ populate: true }, function(windows) {
+                for (var i=0; i < windows.length; i++) {
+                    var tabs = windows[i].tabs;
+                    for (var j=0; j < tabs.length; j++)
+                        try {
+                            callback.call(this, tabs[j]);
+                        }
+                        catch(e) {
+                            console.log(e);
+                        }
+                }
+            });
+        }
+
+        function showIcon() {
+            foreachTab(function (tab) {
+                updatePageAction(tab.id, tab.url);
+            });
+        }
+        showIcon();
+
+        function deleteFileItem(tabId){
+            delete FilesMap[tabId];
+            showIcon();
+        }
+
+        chrome.tabs.onUpdated.addListener(deleteFileItem);
+        chrome.tabs.onRemoved.addListener(deleteFileItem);
+
+        chrome.experimental.webRequest.onBeforeRequest.addListener(
+            function(details) {
+                if (details.type != "object")
+                    return;
+                var href = details.url.toLowerCase();
+                var match = false;
+                $.each(ExtStrs, function (i, ext) {
+                    if ((href.lastIndexOf(ext) + ext.length) == href.length)
+                        { match = true; return false; }
+                });
+                if (!match) {
+                    $.each(RegStrs, function (i, reg) {
+                        try {
+                            if (reg.test(href)) { match = true; return false; }
+                        } catch (e) { }
+                    });
+                }
+                if (match) {
+                    console.log(details.url);
+                    var urlTab = "";
+                    var title = "";
+
+                    foreachTab(function (tab) {
+                        if (tab.id == details.tabId) {
+                            title = tab.title;
+                            urlTab = tab.url;
+                        }
+                    });
+
+                    var dm = formatstr(get(_cfgid.DownloadManagerCurrent));
+
+                    if ( dm != "" )
+                        chrome.pageAction.setIcon({ tabId:details.tabId, path:"images/dms/" + dm + ".png" })
+
+                    if (typeof(FilesMap[details.tabId]) == 'undefined' || FilesMap[details.tabId] == null)
+                        FilesMap[details.tabId] = {};
+
+                    FilesMap[details.tabId][details.url] = {dm: dm, url: details.url, comment: title, urlTab: urlTab};
+                    showIcon();
+                    //downone(dm, details.url, urlTab, title, [])
+					var cancel = strtobool(get(_cfgid.EnableBlockStream));
+                    return { cancel: cancel };
+                }
+        },{},["blocking"]);
     </script>
 </body>
 </html>

@@ -1,0 +1,145 @@
+<html>
+    <head>
+        <script type="text/javascript" src="js/j142.js"></script>
+        <script type="text/javascript" src="js/lib.js"></script>
+        <style>
+            body {
+                width: 400px
+                margin: 0;
+            }
+            ._yissyoo_dmb_menu
+            {
+                list-style-type: none;
+                margin: 0px;
+                border: 1px solid #979797;
+                background-color: #F0F0F0;
+                font-size: 12px;
+                font-weight: normal;
+                line-height: 20px;
+                padding: 0px;
+                text-align: left;
+                overflow: hidden;
+            }
+            ._yissyoo_dmb_menu li
+            {
+                border: solid 1px #F0F0F0;
+                -webkit-border-radius: 2px;
+                margin: 2px;
+                text-align: left;
+                line-height: 20px;
+            }
+            ._yissyoo_dmb_menu li div
+            {
+                float: left;
+                margin-left: 2px;
+                margin-top: 2px;
+                padding: 0px;
+                -webkit-border-radius: 1px;
+                background-repeat: no-repeat;
+            }
+            ._yissyoo_dmb_menu li a
+            {
+                text-align: left;
+                font-family: Gisha, Arial, Courier New, SimSun;
+                cursor: default;
+                display: block;
+                text-decoration: none;
+                color: Black;
+                padding-right: 5px;
+                padding-left: 5px;
+                line-height: 20px;
+            }
+            ._yissyoo_dmb_menu li:active
+            {
+                color: Black;
+                background-image: none;
+            }
+
+            ._yissyoo_dmb_menu li:hover
+            {
+                border: solid 1px #AECFF7;
+                color: Black;
+                background-image: url('../images/menuitemselbg.gif');
+                background-repeat: repeat-x;
+            }
+            ._yissyoo_dmb_menu li a:hover
+            {
+                color: Black;
+            }
+            ._yissyoo_dmb_menu li.septop {
+                border-top: 1px solid #979797;
+            }
+            ._yissyoo_dmb_menu li.sepbottom {
+                border-bottom: 1px solid #979797;
+            }
+        </style>
+        <script type="text/javascript">
+            var downone = function (dm, link, referer, comment) {
+                if (dm == null)
+                    dm = "";
+                chrome.extension.sendRequest({
+                    name: "downone",
+                    dm: dm,
+                    link: link,
+                    referer: referer,
+                    txt: comment,
+                    cookies: "", posts: ""
+                });
+            };
+            var downall = function () {
+                if (typeof(files) == 'undefined' || files == null)
+                    return false;
+                var dm = "";
+                var referer = "";
+                var links = [];
+                var comments = [];
+                $.each(files, function(i, file) {
+                    dm = file.dm;
+                    referer = file.urlTab;
+                    links.push(file.url);
+                    comments.push(file.comment);
+                });
+                if (dm == null)
+                    dm = "";
+                chrome.extension.sendRequest({ name: "downall", dm: dm, links: links, referer: referer, txts: comments, cookies: [] });
+            };
+
+            var files = null;
+
+            function load() {
+                var be = $(document.body).empty();
+                var menu = createle2("ul").attr("class", "_yissyoo_dmb_menu");
+                be.append(menu);
+
+                chrome.tabs.getSelected(null, function(tab){
+                    files = chrome.extension.getBackgroundPage().getFiles(tab.id);
+
+                    if (typeof(files) == 'undefined' || files == null)
+                        return false;
+
+                    var count = 0;
+                    $.each(files, function(i, file) {
+                        count++;
+                        menu.append(createle2("li").attr("file", i).click(function () {
+                                cf = files[$(this).attr("file")];
+                                downone(cf.dm, cf.url, cf.urlTab, cf.comment);
+                                window.close();
+                        }).append(createle2("nobr").append(createle2("a").attr("title", file.url.replace(/.*\//, "")).append(createle2("nobr").text(file.url.replace(/.*\//, ""))))));
+                    });
+                    if (count > 1) {
+                        menu.append(createle2("li").attr({"id":"downall", "class":"septop"}).click(function () {
+                                downall();
+                                window.close();
+                        }).append(createle2("nobr").append(createle2("a").append(createle2("nobr").text("Download all")))));
+                    }
+                });
+
+                menu.append(createle2("li").attr({"id":"options", "class":"sepbottom"}).click(function () {
+                    chrome.extension.getBackgroundPage().opentab("options.html");
+                    window.close();
+                }).append(createle2("a").append(createle2("nobr").text("Options..."))));
+            }
+        </script>
+    </head>
+    <body onload="load()"></body>
+</html>

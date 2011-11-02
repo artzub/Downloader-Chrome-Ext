@@ -87,6 +87,7 @@ function ready() {
     }, "text");
     //
     $("#txtCustom").val(get(_cfgid.DownloadManagerCustomString));
+    $("#chkBlockStream")[0].checked = strtobool(get(_cfgid.EnableBlockStream));
     $("#chkLeftClick")[0].checked = strtobool(get(_cfgid.EnableLeftClick));
     $("#txtExts").val(get(_cfgid.LeftClickExtensions) + "\n" + get(_cfgid.LeftClickRegexs));
     $("#txtDoM").val(get(_cfgid.MenuItemTextRoot));
@@ -105,6 +106,7 @@ function save(close) {
     $("input[name='dm']").each(function () { var r = $(this)[0]; if (r.checked) dm = r.value; });
     set(_cfgid.DownloadManagerCurrent, dm);
     set(_cfgid.DownloadManagerCustomString, $("#txtCustom").val());
+    set(_cfgid.EnableBlockStream, booltostr($("#chkBlockStream")[0].checked));
     set(_cfgid.EnableLeftClick, booltostr($("#chkLeftClick")[0].checked));
 
     var mstr = $("#txtExts").val()

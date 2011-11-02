@@ -3,8 +3,7 @@
    "content_scripts": [ {
       "all_frames": true,
       "js": [ "js/j142.js", "js/lib.js", "js/dmb.js" ],
-      "matches": [ "http://*/*", "https://*/*", "ftp://*/*", "file:///*/*" ],
-	  "run_at": "document_end"
+      "matches": [ "http://*/*", "https://*/*", "ftp://*/*", "file:///*/*" ]
    } ],
    "default_locale": "en",
    "description": "__MSG_description__",
@@ -21,6 +20,10 @@
       "path": "npdmb.dll",
       "public": true
    } ],
+   "page_action": {
+      "default_icon": "images/menu.png",
+      "popup": "popup.html"
+   },
    "update_url": "http://clients2.google.com/service/update2/crx",
    "version": "1.4.4.31"
 }
